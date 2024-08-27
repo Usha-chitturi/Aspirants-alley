@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Posts</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+		 <nav class="navbar">
+        <ul class="navbar-list">
+            <li class="navbar-item"><a href="#" th:href="@{/}">Home</a></li>
+            <li class="navbar-item"><a href="#" th:href="@{/profile}">Profile</a></li>
+            <li class="navbar-item"><a href="#">Logout</a></li>
+        </ul>
+    </nav>
+
+        <!-- Streak Card Section -->
+        <div class="streak-card">
+            <div class="streak-header">
+                <h2>My Streak</h2>
+                <span class="reset-time">Resets at 11:59PM EST <i class="fas fa-pencil-alt"></i></span>
+            </div>
+            <div class="streak-day-count" >1 day</div>
+            <div class="streak-dates">
+                <div class="streak-date">
+                    <div class="streak-circle active"><i class="fas fa-fire"></i></div>
+                    <div>Aug 16</div>
+                </div>
+                <div class="streak-date">
+                    <div class="streak-circle"><i class="fas fa-circle"></i></div>
+                    <div>Today</div>
+                </div>
+                <div class="streak-date">
+                    <div class="streak-circle"><i class="fas fa-circle"></i></div>
+                    <div>Aug 18</div>
+                </div>
+                <div class="streak-date">
+                    <div class="streak-circle"><i class="fas fa-circle"></i></div>
+                    <div>Aug 19</div>
+                </div>
+                <div class="streak-date">
+                    <div class="streak-circle"><i class="fas fa-circle"></i></div>
+                    <div>Aug 20</div>
+                </div>
+                <div class="streak-date">
+                    <div class="streak-circle"><i class="fas fa-circle"></i></div>
+                    <div>Aug 21</div>
+                </div>
+                <div class="streak-date">
+                    <div class="streak-circle"><i class="fas fa-circle"></i></div>
+                    <div>Aug 22</div>
+                </div>
+            </div>
+              <button class="report-button" onclick="location.href='/report'">Report User</button>
+        </div>
+
+        <!-- Post Card Section -->
+        <div class="post-card" th:each="post, iterStat : ${posts}">
+            <div class="post-header">
+                <img src="https://via.placeholder.com/50" alt="User Avatar"/>
+                <div class="post-info">
+                    <div class="post-author">John Doe</div>
+                    <div class="post-time">1h ago</div>
+                </div>
+            </div>
+            <div class="title">
+                <p th:text="${post.description}">Sample description related to UPSC.</p>
+            </div>
+            <div class="media" th:if="${post.imageUrl}">
+                <img th:src="${post.imageUrl}" src="https://via.placeholder.com/600x400?text=UPSC+Sample+Image" alt="Post Image"/>
+            </div>
+            <div class="post-actions">
+                <button class="action-btn like-btn"><i class="fas fa-thumbs-up"></i> Like</button>
+                <button class="action-btn comment-btn" onclick="toggleCommentBox('commentBox${iterStat.index}')"><i class="fas fa-comment"></i> Comment</button>
+                <button class="action-btn share-btn" onclick="openShareModal('shareModal${iterStat.index}', 'https://example.com/post/${post.id}')"><i class="fas fa-share"></i> Share</button>
+            </div>
+            <div class="comment-box" id="commentBox${iterStat.index}" style="display: none;">
+                <textarea placeholder="Write a comment..."></textarea>
+                <button class="btn-submit">Post Comment</button>
+            </div>
+        </div>
+
+        <!-- Modal HTML -->
+        <div id="shareModal${iterStat.index}" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('shareModal${iterStat.index}')">&times;</span>
+                <h2>Share this Post</h2>
+                <input type="text" id="shareLink${iterStat.index}" placeholder="Create a link" />
+                <button class="btn-submit" onclick="copyLink('shareLink${iterStat.index}')">Copy Link</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleCommentBox(commentBoxId) {
+            var allCommentBoxes = document.querySelectorAll('.comment-box');
+            allCommentBoxes.forEach(function(box) {
+                if (box.id === commentBoxId) {
+                    box.style.display = box.style.display === 'none' || box.style.display === '' ? 'block' : 'none';
+                } else {
+                    box.style.display = 'none';
+                }
+            });
+        }
+
+        function openShareModal(modalId, postLink) {
+            var modal = document.getElementById(modalId);
+            modal.style.display = 'block';
+            var linkInput = modal.querySelector('input[type="text"]');
+            linkInput.value = postLink;
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function copyLink(linkId) {
+            var copyText = document.getElementById(linkId);
+            copyText.select();
+            document.execCommand('copy');
+            alert('Link copied: ' + copyText.value);
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
